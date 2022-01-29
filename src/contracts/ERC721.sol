@@ -30,7 +30,7 @@ contract ERC721 {
        //minting should not be zero
        require(to != address(0), 'ERC721: minting to zero address'); 
        //token should not exist before
-       require(_exist(tokenId), 'ERC721: token should not already exist');
+       require(!_exist(tokenId), 'ERC721: token should not already exist');
        //setting the address to the tokenId
        _tokenOwner[tokenId] = to;
        //increasing the token count to the address
