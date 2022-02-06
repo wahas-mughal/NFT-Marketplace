@@ -16,24 +16,39 @@ contract ERC721Enumerable is ERC721 {
     //map token id to the index of the owned token list
     mapping(uint256 => uint256) private _ownedTokensIndex;
 
-
-    /// @notice Count NFTs tracked by this contract
-    /// @return A count of valid NFTs tracked by this contract, where each one of
-    ///  them has an assigned and queryable owner not equal to the zero address
-    function totalSupply() external view returns (uint256) {
+    //total supply of minted tokens
+    function totalSupply() public view returns (uint256) {
         return _allTokens.length;
     }
 
+    
+    //get token by index
+    function tokenByIndex(uint256 _index) external view returns (uint256) {
+        require(_index < totalSupply(), 'globle index is out of bound');
+        return _allTokens[_index];
+    }
 
-    // function tokenByIndex(uint256 _index) external view returns (uint256);
 
-    // function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256);
+    //get token by owner address and index
+    function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256){
+        require(_index < balanceOf(_owner), 'owner index is out of bound');
+        return _ownedTokens[_owner][_index];
+    }
 
 
    //mint NFTs through function overriding
    function _mint(address to, uint256 tokenId) internal override(ERC721) {
        super._mint(to, tokenId);
        _addTokensToAllTokensEnumeration(tokenId);
+       _addTokensToOwnersEnumeration(to, tokenId);
+   }
+
+   //add ownedTokens to the owner addresses
+   function _addTokensToOwnersEnumeration(address to, uint256 tokenId) private {
+       //asign the tokenId to the address index 
+       _ownedTokensIndex[tokenId] = _ownedTokens[to].length;
+       //push tokenId into the array with the address
+       _ownedTokens[to].push(tokenId);
    }
 
    // add every minted token to the Total Supply 
