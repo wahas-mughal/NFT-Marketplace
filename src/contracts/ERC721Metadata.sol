@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract ERC721Metadata {
+import './interfaces/IERC721Metadata.sol';
+import './ERC165.sol';
+
+contract ERC721Metadata is IERC721Metadata, ERC165 {
+
 
     string private _name;
     string private _symbol;
@@ -9,15 +13,18 @@ contract ERC721Metadata {
     constructor(string memory named, string memory sign){
         _name = named;
         _symbol = sign;
+      _registerInterface(bytes4(keccak256('name(bytes4)')^keccak256('symbol(bytes4)')));
     }
 
+
+
     //returns name
-    function name() external view returns(string memory)  {
+    function name() external override view returns(string memory)  {
         return _name;
     }
     
     //returns symbol
-   function symbol() external view returns(string memory)  {
+   function symbol() external override view returns(string memory)  {
         return _symbol;
     }
 

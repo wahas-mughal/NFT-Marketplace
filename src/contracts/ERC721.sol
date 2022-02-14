@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import './ERC165.sol';
+import './interfaces/IERC721.sol';
 
-contract ERC721 {
+contract ERC721 is ERC165, IERC721 {
 
 
-    //emit event
-    event Transfer(
-    address indexed from, 
-    address indexed to, 
-    uint256 indexed tokenId);
+
+  constructor() {
+      _registerInterface(bytes4(keccak256('balanceOf(bytes4)')^keccak256('ownerOf(bytes4)')^keccak256('tranferFrom(bytes4')));
+  }
+
 
    //track token ids to address
    mapping(uint256 => address) private _tokenOwner;
@@ -35,7 +37,7 @@ contract ERC721 {
     /// @param _owner An address for whom to query the balance
     /// @return The number of NFTs owned by `_owner`, possibly zero
 
-    function balanceOf(address _owner) public view returns (uint256) {
+    function balanceOf(address _owner) public override view returns (uint256) {
         require(_owner != address(0), 'Error - address is invalid or zero');
         uint256 tokens = _tokenOwnedCount[_owner];
         return tokens;
@@ -47,7 +49,7 @@ contract ERC721 {
     /// @param _tokenId The identifier for an NFT
     /// @return The address of the owner of the NFT
 
-    function ownerOf(uint256 _tokenId) public view returns (address){
+    function ownerOf(uint256 _tokenId) public override view returns (address){
         address owner = _tokenOwner[_tokenId];
         require(owner != address(0), 'Error - token does not exist!');
         return owner;
@@ -99,7 +101,7 @@ contract ERC721 {
         emit Transfer(_from, _to, _tokenId);
     }
 
-    function transferFrom(address _from, address  _to, uint256 _tokenId) public{
+    function transferFrom(address _from, address  _to, uint256 _tokenId) public override {
         _transferFrom(_from, _to, _tokenId);
     }
 
